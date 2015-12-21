@@ -22,19 +22,29 @@ describe 'String' do
 
   describe '#blank?' do
 
-    it "returns true if string is empty"
+    it "returns true if string is empty" do
+      expect("".blank?).to be(true)
+    end
 
-    it "returns true if string contains only spaces"
+    it "returns true if string contains only spaces" do
+      expect("    ".blank?).to be(true)
+    end 
 
-    it "returns true if string contains only tabs"
-    # Get a tab using a double-quoted string with \t
-    # example: "\t\t\t"
+    it "returns true if string contains only tabs" do
+      expect("\t\t\t".blank?).to be(true)
+    end
 
-    it "returns true if string contains only spaces and tabs"
+    it "returns true if string contains only spaces and tabs" do
+      expect("   \t   ".blank?).to be(true)
+    end
 
-    it "returns false if string contains a letter"
+    it "returns false if string contains a letter" do
+      expect("  a ".blank?).to be(false)
+    end 
 
-    it "returns false if string contains a number"
+    it "returns false if string contains a number" do
+      expect("1".blank?).to be(false)
+    end
 
   end
 
