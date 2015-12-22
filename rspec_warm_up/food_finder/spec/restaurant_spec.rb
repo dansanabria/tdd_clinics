@@ -4,17 +4,26 @@ describe Restaurant do
 
   let(:test_file) { 'spec/fixtures/restaurants_test.txt' }
   let(:crescent) { Restaurant.new(:name => 'Crescent', :cuisine => 'paleo', :price => '321') }
-  
+
   describe 'attributes' do
-  
-    it "allow reading and writing for :name"
 
-    it "allow reading and writing for :cuisine"
+    it "allow reading and writing for :name" do
+      rest = Restaurant.new
+      rest.name = "little_italy"
+      expect(rest.name).to eq "little_italy"
+    end
 
-    it "allow reading and writing for :price"
-    
+    it "allow reading and writing for :cuisine" do
+      expect(crescent).to have_attributes(:cuisine => 'paleo')
+    end
+
+    it "allow reading and writing for :price" do
+      crescent.price = '12.50'
+      expect(crescent.price).to eq '12.50'
+    end 
+
   end
-  
+
   describe '.load_file' do
 
     it 'does not set @@file if filepath is nil' do
