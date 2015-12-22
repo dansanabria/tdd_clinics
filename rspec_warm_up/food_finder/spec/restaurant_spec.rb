@@ -18,9 +18,8 @@ describe Restaurant do
     end
 
     it "allow reading and writing for :price" do
-      crescent.price = '12.50'
-      expect(crescent.price).to eq '12.50'
-    end 
+      expect{ crescent.price = '12,50'}.to change(crescent, :price).from('321').to('12,50')
+    end
 
   end
 
@@ -30,7 +29,7 @@ describe Restaurant do
       no_output { Restaurant.load_file(nil) }
       expect(Restaurant.file).to be_nil
     end
-    
+
     it 'sets @@file if filepath is usable' do
       no_output { Restaurant.load_file(test_file) }
       expect(Restaurant.file).not_to be_nil
@@ -43,35 +42,33 @@ describe Restaurant do
         Restaurant.load_file(nil)
       end.to output(/not usable/).to_stdout
     end
-    
+
     it 'does not output a message if filepath is usable' do
       expect do
         Restaurant.load_file(test_file)
       end.not_to output.to_stdout
     end
-    
+
   end
-  
+
   describe '.all' do
-    
+
     it 'returns array of restaurant objects from @@file' do
-      pending
       Restaurant.load_file(test_file)
       restaurants = Restaurant.all
-      expect(restaurants.class).to eq('FIXME')
-      expect(restaurants.length).to eq('FIXME')
-      expect(restaurants.first.class).to eq('FIXME')
+      expect(restaurants.class).to eq(Array)
+      expect(restaurants.length).to be > 0
+      expect(restaurants.first.class).to eq(Restaurant)
     end
 
     it 'returns an empty array when @@file is nil' do
-      pending
       no_output { Restaurant.load_file(nil) }
       restaurants = Restaurant.all
-      expect(restaurants).to eq('FIXME')
+      expect(restaurants).to eq([])
     end
-    
+
   end
-  
+
   describe '#initialize' do
 
     context 'with no options' do
