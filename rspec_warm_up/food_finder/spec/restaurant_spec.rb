@@ -75,20 +75,33 @@ describe Restaurant do
       # subject would return the same thing
       let(:no_options) { Restaurant.new }
 
-      it 'sets a default of "" for :name'
+      it 'sets a default of "" for :name' do
+        expect(no_options.name).to eq("")
+      end
 
-      it 'sets a default of "unknown" for :cuisine'
+      it 'sets a default of "unknown" for :cuisine' do
+        expect(no_options.cuisine).to eq("unknown")
+      end
 
-      it 'does not set a default for :price'
+      it 'does not set a default for :price' do
+        expect(no_options.price).to be nil
+      end
     end
-    
+
     context 'with custom options' do
-      
-      it 'allows setting the :name'
+      let(:mi_casa) { Restaurant.new(:name => "Mi otra Casa", :price => "10", :cuisine => "Mexican") }
 
-      it 'allows setting the :cuisine'
+      it 'allows setting the :name' do
+        expect{ mi_casa.name = "Mi Casa" }.to change(mi_casa, :name).from("Mi otra Casa").to("Mi Casa")
+      end
 
-      it 'allows setting the :price'
+      it 'allows setting the :cuisine' do
+        expect{ mi_casa.cuisine = "Spanish" }.to change(mi_casa, :cuisine).from("Mexican").to("Spanish")
+      end
+
+      it 'allows setting the :price' do
+        expect{ mi_casa.price = "15" }.to change(mi_casa, :price).from("10").to("15")
+      end
 
     end
 
