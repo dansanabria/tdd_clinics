@@ -106,35 +106,70 @@ describe Restaurant do
     end
 
   end
-  
+
   describe '#save' do
-    
-    it 'returns false if @@file is nil'
-    
-    it 'returns false if not valid'
-    
-    it 'calls append on @@file if valid'
-    
+
+    it 'returns false if @@file is nil' do
+      expect(Restaurant.file).to be_nil
+      expect(crescent.save).to be false
+    end
+
+    it 'returns false if not valid' do
+      no_output { Restaurant.load_file(test_file) }
+      crescent.name = nil
+      expect(crescent.save).to be false
+    end
+
+    it 'calls append on @@file if valid' do
+      no_output { Restaurant.load_file(test_file) }
+      expect(Restaurant.file).to_not be nil
+      expect(Restaurant.file).to receive(:append).with(crescent)
+      crescent.save
+    end
+
   end
-  
+
   describe '#valid?' do
-    
-    it 'returns false if name is nil'
 
-    it 'returns false if name is blank'
+    it 'returns false if name is nil' do
+      crescent.name = nil
+      expect(crescent.valid?).to be false
+    end
 
-    it 'returns false if cuisine is nil'
+    it 'returns false if name is blank' do
+      crescent.name = ""
+      expect(crescent.valid?).to be false
+    end
 
-    it 'returns false if cuisine is blank'
-    
-    it 'returns false if price is nil'
+    it 'returns false if cuisine is nil' do
+      crescent.cuisine = nil
+      expect(crescent.valid?).to be false
+    end
 
-    it 'returns false if price is 0'
-    
-    it 'returns false if price is negative'
+    it 'returns false if cuisine is blank' do
+      crescent.cuisine = ""
+      expect(crescent.valid?).to be false
+    end
 
-    it 'returns true if name, cuisine, price are present'
-    
+    it 'returns false if price is nil' do
+      crescent.price = nil
+      expect(crescent.valid?).to be false
+    end
+
+    it 'returns false if price is 0' do
+      crescent.price = 0
+      expect(crescent.valid?).to be false
+    end
+
+    it 'returns false if price is negative' do
+      crescent.price = -10
+      expect(crescent.valid?).to be false
+    end
+
+    it 'returns true if name, cuisine, price are present' do
+      expect(crescent.valid?).to be true
+    end 
+
   end
 
 end
