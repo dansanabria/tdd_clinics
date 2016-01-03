@@ -4,64 +4,60 @@ describe Guide do
 
   let(:test_file) { 'spec/fixtures/restaurants_test.txt' }
   subject { Guide.new(test_file) }
-  
+
   let(:new_file)  { 'spec/fixtures/new_restaurants_test.txt' }
   let(:new_file_path) { File.join(APP_ROOT, new_file) }
   let(:blank_guide) { Guide.new(new_file) }
-  
+
   it 'includes NumberHelper and #number_to_currency' do
     expect(described_class.included_modules).to include(NumberHelper)
     expect(subject).to respond_to(:number_to_currency)
   end
-  
+
   describe '#intialize' do
-    
+
     it 'calls Restaurant#load_file with its path argument' do
-      skip('Needs expectation')
+      expect(Restaurant).to receive(:load_file).with(test_file)
       Guide.new(test_file)
-      # expect ...
     end
-    
+
   end
-  
+
   describe '#launch!' do
-    
+
     it 'outputs a introductory message' do
-      skip('Needs expectation')
       setup_fake_input('quit')
-      # expect ...
+      expect{ subject.launch! }.to output(/Welcome/).to_stdout
     end
-    
+
   end
 
   describe 'performing actions' do
-    
+
     context 'with invalid action' do
-      
+
       it 'outputs list of valid actions' do
-        skip('Needs expectation')
         setup_fake_input('invalid action', 'quit')
-        # expect ...
+        expect { subject.launch! }.to output(/Action not recognized/).to_stdout
       end
-      
+
     end
-    
+
     context 'with quit action' do
-      
+
       it 'outputs concluding message and exits' do
-        skip('Needs expectation')
         setup_fake_input('quit')
-        # expect ...
+        expect{ subject.launch! }.to output(/Bon Appetit/).to_stdout
       end
-      
+
     end
 
     context 'with list action' do
-      
+
       it 'outputs a formatted list of restaurants' do
         setup_fake_input('list', 'quit')
         output = capture_output { subject.launch! }
-        
+
         lines = output.split("\n")
         expect(lines[10]).to match(/^\sName\s{27}Cuisine\s{15}Price$/)
         expect(lines[11]).to eq("-" * 60)
@@ -70,23 +66,21 @@ describe Guide do
         end
         expect(lines[18]).to eq("-" * 60)
       end
-      
+
       it 'outputs a message if no listings are found' do
-        skip("Needs expectation")
         setup_fake_input('list', 'quit')
         output = capture_output { blank_guide.launch! }
         lines = output.split("\n")
         expect(lines[10]).to match(/^\sName\s{27}Cuisine\s{15}Price$/)
         expect(lines[11]).to eq("-" * 60)
-        # expect(lines[12]).to ...
+        expect(lines[12]).to match(/No listings found/)
         expect(lines[13]).to eq("-" * 60)
-        
+
         # clean up
         remove_created_file(new_file_path)
       end
-      
+
       it 'sorts alphabetically by default' do
-        skip('Needs expectation')
         setup_fake_input('list', 'quit')
         output = capture_output { subject.launch! }
         lines = output.split("\n")
@@ -94,11 +88,10 @@ describe Guide do
         names = lines[12..17].map {|l| l.match(/^\s(.+)\s+.+\s+\$\d+\.\d{2}$/)[1]}
         # Build array with the first characters
         first_chars = names.map {|l| l[0] }
-        # expect(first_chars).to ...
+        expect(first_chars).to match_array(["C", "H", "M", "P", "Q", "T"])
       end
-      
+
       it 'sorts alphabetically with an invalid sort by' do
-        skip('Needs expectation')
         setup_fake_input('list invalid', 'quit')
         output = capture_output { subject.launch! }
         lines = output.split("\n")
@@ -106,11 +99,10 @@ describe Guide do
         names = lines[12..17].map {|l| l.match(/^\s(.+)\s+.+\s+\$\d+\.\d{2}$/)[1]}
         # Build array with the first characters
         first_chars = names.map {|l| l[0] }
-        # expect(first_chars).to ...
+        expect(first_chars).to match_array(["C", "H", "M", "P", "Q", "T"])
       end
 
       it 'sorts by price when asked' do
-        skip('Needs expectation')
         setup_fake_input('list price', 'quit')
         output = capture_output { subject.launch! }
         lines = output.split("\n")
@@ -121,7 +113,7 @@ describe Guide do
           d, c = string.split('.')
           price = (d.to_i * 100) + c.to_i
         end
-        # expect(prices).to ...
+        expect(prices).to start_with(500).and end_with(3500)
       end
 
       it 'sorts by cuisine when asked' do
@@ -129,13 +121,15 @@ describe Guide do
         setup_fake_input('list cuisine', 'quit')
         output = capture_output { subject.launch! }
         lines = output.split("\n")
+        puts lines
         # Use Regex to extract the cuisines
         cuisines = lines[12..17].map do |l|
           l.match(/^\s.+\s+(.+)\s+\$\d+\.\d{2}$/)[1]
         end
+        puts cuisines.inspect
         # expect(cuisines).to ...
       end
-      
+
     end
 
     context 'with find action' do
