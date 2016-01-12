@@ -117,17 +117,15 @@ describe Guide do
       end
 
       it 'sorts by cuisine when asked' do
-        skip('Needs expectation')
         setup_fake_input('list cuisine', 'quit')
         output = capture_output { subject.launch! }
         lines = output.split("\n")
-        puts lines
         # Use Regex to extract the cuisines
         cuisines = lines[12..17].map do |l|
-          l.match(/^\s.+\s+(.+)\s+\$\d+\.\d{2}$/)[1]
+          cuisine = l.match(/^\s(.+)\s+.+\s+\$\d+\.\d{2}$/)[1]
         end
-        puts cuisines.inspect
-        # expect(cuisines).to ...
+        cuisine = cuisines.map { |s| s.split(/\s{2,}/)[1] }
+        expect(cuisine).to start_with('Coffee').and end_with('Pizza')
       end
 
     end
@@ -135,44 +133,41 @@ describe Guide do
     context 'with find action' do
       
       it 'outputs instructions if no arguments given' do
-        skip('Needs expectation')
         setup_fake_input('find', 'quit')
         output = capture_output { subject.launch! }
-        # expect(output).to ...
+        lines = output.split("\n")
+        expect(lines[8]).to match(/^\s{2,}+FIND A RESTAURANT+\s{2,}$/)
       end
       
       it 'finds restaurants with matching name keyword' do
-        skip('Needs expectation')
         setup_fake_input('find cafe', 'quit')
         output = capture_output { subject.launch! }
         
         lines = output.split("\n")
         expect(lines[11]).to eq("-" * 60)
-        # expect(lines[12]).to ...
+        expect(lines[12]).to match(/^\s+Cafe Masala+\s{2,}/)
         expect(lines[13]).to eq("-" * 60)
       end
 
       it 'finds restaurants with matching cuisine keyword' do
-        skip('Needs expectation')
         setup_fake_input('find mexican', 'quit')
         output = capture_output { subject.launch! }
         
         lines = output.split("\n")
         expect(lines[11]).to eq("-" * 60)
-        # expect(lines[12]).to ...
+        expect(lines[12]).to match(/\s{2,}+Mexican+\s{2,}/)
         expect(lines[13]).to eq("-" * 60)
       end
       
       it 'finds restaurants with prices less than keyword' do
-        skip('Needs expectation')
         setup_fake_input('find 10', 'quit')
         output = capture_output { subject.launch! }
         
         lines = output.split("\n")
         expect(lines[11]).to eq("-" * 60)
-        # expect(lines[12]).to ...
-        # expect(lines[13]).to ...
-        # expect(lines[14]).to ...
+        expect(lines[12].split("$")[1].to_f).to be <= 10.00
+        expect(lines[13].split("$")[1].to_f).to be <= 10.00
+        expect(lines[14].split("$")[1].to_f).to be <= 10.00 
         expect(lines[15]).to eq("-" * 60)
       end
 
@@ -198,15 +193,15 @@ describe Guide do
         # "Average price: "     :price
 
         output = capture_output { subject.launch! }
-        # expect(output).to match(...)
-        # expect(output).to match(...)
-        # expect(output).to match(...)
+        expect(output).to match(/Restaurant name:/)
+        expect(output).to match(/Cuisine type:/)
+        expect(output).to match(/Average price:/)
       end
 
       it 'sends question answers to Restaurant.new' do
-        skip("Needs expectation")
         subject.launch!
-        # expect(Restaurant).to ...
+
+        expect(Restaurant).to have_received(:new).with(:name => 'Chelsea Diner', :cuisine => 'American', :price => '20')
       end
 
     end
